@@ -14,6 +14,8 @@ func Router(app *iris.Application) {
 		lat := ctx.URLParam("lat")
 		lng := ctx.URLParam("lng")
 
+		libs.Log("/geocoder?lat=" + lat + "&lng=" + lng)
+
 		req := libs.GET("https://api.opencagedata.com/geocode/v1/json?q=" + lat + "+" + lng + "&key=efb930759328444aa76ac5123639248c&language=ru&pretty=1")
 
 		var address string
@@ -28,6 +30,8 @@ func Router(app *iris.Application) {
 	})
 
 	app.Post("/me", func(ctx iris.Context) {
+		libs.Log("/me")
+
 		var req map[string]interface{}
 		ctx.ReadJSON(&req)
 
