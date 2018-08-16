@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/kataras/iris"
 	"./libs"
+	"github.com/rubenv/opencagedata"
 )
 
 func Router(app *iris.Application) {
@@ -16,12 +17,24 @@ func Router(app *iris.Application) {
 
 		libs.Log("/geocoder?lat=" + lat + "&lng=" + lng)
 
-		req := libs.GET("https://api.opencagedata.com/geocode/v1/json?q=" + lat + "+" + lng + "&key=efb930759328444aa76ac5123639248c&language=ru&pretty=1")
+		// req := libs.GET("https://api.opencagedata.com/geocode/v1/json?q=" + lat + "+" + lng + "&key=efb930759328444aa76ac5123639248c&language=ru&pretty=1")
+
+		// var address string
+
+		// if len(req["results"].([]interface{})) > 0 {
+		// 	address = req["results"].([]interface{})[0].(map[string]interface{})["formatted"].(string)
+		// } else {
+		// 	address = "undefined"
+		// }
+
+		geocoder := opencagedata.NewGeocoder("efb930759328444aa76ac5123639248c")
+		result, err := geocoder.Geocode(lat + "," + lng, nil)
 
 		var address string
 
-		if len(req["results"].([]interface{})) > 0 {
-			address = req["results"].([]interface{})[0].(map[string]interface{})["formatted"].(string)
+		if err == nil {
+			f_result := result.Results[0]
+			address = f_result.Formatted
 		} else {
 			address = "undefined"
 		}
