@@ -11,6 +11,10 @@ func Router(app *iris.Application) {
 		ctx.WriteString("pong")
 	})
 
+	app.Get("/", func(ctx iris.Context) {
+		ctx.WriteString(libs.View("index"))
+	})
+
 	app.Get("/geocoder", func(ctx iris.Context) {
 		lat := ctx.URLParam("lat")
 		lng := ctx.URLParam("lng")
@@ -42,8 +46,8 @@ func Router(app *iris.Application) {
 		ctx.JSON(iris.Map{"address": address})
 	})
 
-	app.Post("/me", func(ctx iris.Context) {
-		libs.Log("/me")
+	app.Post("/place", func(ctx iris.Context) {
+		libs.Log("/place")
 
 		var req map[string]interface{}
 		ctx.ReadJSON(&req)
