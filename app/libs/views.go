@@ -13,3 +13,11 @@ func View(view string) string {
     }
 	return string(dat)
 }
+
+func JS(file string) string {
+	dat, err := ioutil.ReadFile("./app/views/js/" + file)
+	if err != nil {
+        panic(err)
+    }
+	return string(dat)
+}

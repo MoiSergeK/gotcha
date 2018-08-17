@@ -3,6 +3,8 @@ package app
 import (
 	"github.com/kataras/iris"
 	"./libs"
+	"regexp"
+	// "encoding/json"
 )
 
 func Router(app *iris.Application) {
@@ -11,7 +13,18 @@ func Router(app *iris.Application) {
 	})
 
 	app.Get("/", func(ctx iris.Context) {
-		ctx.WriteString(libs.View("index"))
+		view := libs.View("index")
+
+		for key, value := range map[string]string{ "title": "Gotcha | HOME" } {
+			r := regexp.MustCompile("{{ ?" + key + " ?}}")
+			view = r.ReplaceAllString(view, value)
+		}
+		
+		ctx.WriteString(view)
+	})
+
+	app.Get("/app.js", func(ctx iris.Context) {
+		ctx.WriteString(libs.JS("app.js"))
 	})
 
 	// app.Get("/geocoder", func(ctx iris.Context) {
@@ -48,9 +61,39 @@ func Router(app *iris.Application) {
 	app.Post("/place", func(ctx iris.Context) {
 		libs.Log("/place")
 
-		var req map[string]interface{}
+		var req map[string]string
 		ctx.ReadJSON(&req)
 
-		ctx.JSON(iris.Map{"data": req["data"]})
+		libs.Insert("places", req)
+
+		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
+	})
+
+	app.Get("/places", func(ctx iris.Context) {
+		ctx.Header("Access-Control-Allow-Origin", "*")
+
+		rows := libs.Select("*", "places", "")
+
+		var data []iris.Map
+
+		for _, value := range rows {
+			data = append(data, iris.Map{"id": value["id"], "coords": value["coords"], "address": value["address"]})
+		}
+
+		ctx.JSON(iris.Map{"status": 200, "data": data})
+	})
+
+	app.Options("/*", func(ctx iris.Context) {
+		ctx.Header("Access-Control-Allow-Origin", "*")
+		ctx.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
+		ctx.WriteString("")
+	})
+
+	app.Delete("/places/{id}", func(ctx iris.Context) {
+		ctx.Header("Access-Control-Allow-Origin", "*")
+
+		libs.Delete("places", "id=" + ctx.Params().Get("id"))
+
+		ctx.JSON(iris.Map{"status": 200, "data": nil})
 	})
 }

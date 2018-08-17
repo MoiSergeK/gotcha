@@ -19,3 +19,7 @@ func Log(data string) {
 
 	defer file.Close() 
 }
+
+func Println(message string) {
+	fmt.Println(">>>" + message)
+}
