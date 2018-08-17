@@ -3,11 +3,11 @@ $(document).ready(() => {
 })
 
 function loadPlaces(){
-    $.get('http://127.0.0.1:8080/places', (response) => {
+    $.get(location.host + '/places', (response) => {
         $('tbody').html('');
 
         let rows = response.data;
-        
+
         for(let row of rows) {
             let tr = $('<tr></tr>');
 
@@ -19,7 +19,7 @@ function loadPlaces(){
             let btn = $('<button class="btn btn-outline-danger btn-sm ">Del</button>');
 
             btn.on('click', (e) => {
-                $.ajax({url: 'http://127.0.0.1:8080/places/' + row.id, method: 'DELETE', success: (response) => {
+                $.ajax({url: location.host + '/places/' + row.id, method: 'DELETE', success: (response) => {
                     loadPlaces();
                 }})
             })
