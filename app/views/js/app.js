@@ -12,8 +12,9 @@ function loadPlaces(){
             for(let row of rows) {
                 let tr = $('<tr></tr>');
 
-                for(let k in row)
-                    tr.append('<td>' + row[k] + '</td>');
+                tr.append('<td>' + row.id + '</td>');
+                tr.append('<td>' + row.coords + '</td>');
+                tr.append('<td>' + row.address + '</td>');
 
                 let td = $('<td></td>');
 
