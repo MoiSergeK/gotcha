@@ -5,6 +5,7 @@ import (
 	"./libs"
 	"regexp"
 	// "encoding/json"
+	"os"
 )
 
 func Router(app *iris.Application) {
@@ -101,5 +102,10 @@ func Router(app *iris.Application) {
 		data := libs.ReadFileAsText("./app/log/log.txt")
 
 		ctx.JSON(iris.Map{"status": 200, "data": data})
+	})
+
+	app.Delete("/log", func(ctx iris.Context) {
+		os.Create("./app/log/log.txt")
+		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
 	})
 }

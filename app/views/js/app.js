@@ -18,6 +18,12 @@ function showLog(){
     })
 }
 
+function clearLog(){
+    $.ajax({url: '/log', method: 'delete', success: (response) => {
+        showLog();
+    }})
+}
+
 function loadPlaces(){
     $.get(location.protocol + '//' + location.host + '/places', (response) => {
         $('tbody').html('');
