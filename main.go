@@ -16,7 +16,7 @@ func main() {
 	server.Logger().SetLevel("debug")
 	
 	server.Use(recover.New())
-	server.Use(logger.New())
+	// server.Use(logger.New())
 	
 	app.Router(server)
 	
