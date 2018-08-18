@@ -25,7 +25,7 @@ function clearLog(){
 }
 
 function loadPlaces(){
-    $.get(location.protocol + '//' + location.host + '/places', (response) => {
+    $.get('/places', (response) => {
         $('tbody').html('');
 
         let rows = response.data;
@@ -43,7 +43,7 @@ function loadPlaces(){
                 let btn = $('<button class="btn btn-outline-danger btn-sm ">Del</button>');
 
                 btn.on('click', (e) => {
-                    $.ajax({url: location.protocol + '//' + location.host + '/places/' + row.id, method: 'DELETE', success: (response) => {
+                    $.ajax({url: '/places/' + row.id, method: 'DELETE', success: (response) => {
                         loadPlaces();
                     }})
                 })
