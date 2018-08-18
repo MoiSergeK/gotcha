@@ -3,32 +3,34 @@ $(document).ready(() => {
 })
 
 function loadPlaces(){
-    $.get(location.host + '/places', (response) => {
+    $.get(location.protocol + '//' + location.host + '/places', (response) => {
         $('tbody').html('');
 
         let rows = response.data;
 
-        for(let row of rows) {
-            let tr = $('<tr></tr>');
+        if(rows){
+            for(let row of rows) {
+                let tr = $('<tr></tr>');
 
-            for(let k in row)
-                tr.append('<td>' + row[k] + '</td>');
+                for(let k in row)
+                    tr.append('<td>' + row[k] + '</td>');
 
-            let td = $('<td></td>');
+                let td = $('<td></td>');
 
-            let btn = $('<button class="btn btn-outline-danger btn-sm ">Del</button>');
+                let btn = $('<button class="btn btn-outline-danger btn-sm ">Del</button>');
 
-            btn.on('click', (e) => {
-                $.ajax({url: location.host + '/places/' + row.id, method: 'DELETE', success: (response) => {
-                    loadPlaces();
-                }})
-            })
+                btn.on('click', (e) => {
+                    $.ajax({url: location.protocol + '//' + location.host + '/places/' + row.id, method: 'DELETE', success: (response) => {
+                        loadPlaces();
+                    }})
+                })
 
-            td.append(btn);
+                td.append(btn);
 
-            tr.append(td);
+                tr.append(td);
 
-            $('tbody').append(tr)
+                $('tbody').append(tr)
+            }
         }
     })
 }
