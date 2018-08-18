@@ -8,11 +8,9 @@ import (
 )
 
 func Router(app *iris.Application) {
-	app.Get("/ping", func(ctx iris.Context) {
-		ctx.WriteString("pong")
-	})
-
 	app.Get("/", func(ctx iris.Context) {
+		libs.Log("/")
+
 		view := libs.View("index")
 
 		for key, value := range map[string]string{ "title": "Gotcha | HOME" } {
@@ -70,6 +68,7 @@ func Router(app *iris.Application) {
 	})
 
 	app.Get("/places", func(ctx iris.Context) {
+		libs.Log("/places")
 		ctx.Header("Access-Control-Allow-Origin", "*")
 
 		rows := libs.Select("*", "places", "")
@@ -90,10 +89,17 @@ func Router(app *iris.Application) {
 	})
 
 	app.Delete("/places/{id}", func(ctx iris.Context) {
+		libs.Log("/places/{id}")
 		ctx.Header("Access-Control-Allow-Origin", "*")
 
 		libs.Delete("places", "id=" + ctx.Params().Get("id"))
 
 		ctx.JSON(iris.Map{"status": 200, "data": nil})
+	})
+
+	app.Get("/log", func(ctx iris.Context) {
+		data := libs.ReadFileAsText("./app/log/log.txt")
+
+		ctx.JSON(iris.Map{"status": 200, "data": data})
 	})
 }

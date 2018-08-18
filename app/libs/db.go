@@ -17,6 +17,11 @@ func initDBConn() *sql.DB {
 	return db
 }
 
+func SyncDB() {
+	CreateTableIfNotExists("places", map[string]string{"id": "int(11) not null auto_increment", "coords": "varchar(51) not null", "address": "varchar(300) not null"})
+	CreateTableIfNotExists("users", map[string]string{"id": "int(11) not null auto_increment", "phone": "varchar(20) not null"})
+}
+
 func Insert(table string, values map[string]string) {
 	dbconf := DB()
 
@@ -67,12 +72,50 @@ func Select(what string, from string, where string) []map[string]string {
 	return places
 }
 
+func Exists(table string, where string) int {
+	dbconf := DB()
+
+	if where != "" { where = " where " + where }
+
+	rows, err := dbConnection.Query("select count(*) as count from" + dbconf["db"] + "." + table + " where " + where)
+
+	if err != nil{ panic(err) }
+
+	defer rows.Close()
+
+	var count int
+
+	var recs map[string]int
+
+    for rows.Next(){
+		err := rows.Scan(&count)
+
+		if err != nil{ panic(err) }
+		
+        recs = map[string]int{"count": count}
+	}
+
+	var exists = 0
+
+	if recs["count"] > 0 {exists = 1}
+
+	return exists
+}
+
 func Delete(from string, where string) {
 	dbconf := DB()
 
 	dbConnection.Exec("delete from " + dbconf["db"] + "." + from + " where " + where)
 }
 
-func CreateTableIfNotExists(tableName string) {
-	
+func CreateTableIfNotExists(table string, fields map[string]string) {
+	createQuery := ""
+
+	for key, value := range fields {
+		createQuery += key + " " + value + ", "
+	}
+
+	createQuery += "PRIMARY KEY (id)"
+
+	dbConnection.Exec("create table if not exists gotcha." + table + " (" + createQuery + ") ")
 }

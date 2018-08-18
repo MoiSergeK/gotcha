@@ -1,6 +1,22 @@
 $(document).ready(() => {
     loadPlaces();
+    
+    showLog();
+    
+    setInterval(() => {
+        showLog();
+    }, 5000);
 })
+
+function showLog(){
+    $.get('/log', (response) => {
+        $('#logStack').html("");
+
+        for(let line of response.data.split("\n")){
+            $('#logStack').append('<small>' + line + '</small><br>');
+        }
+    })
+}
 
 function loadPlaces(){
     $.get(location.protocol + '//' + location.host + '/places', (response) => {
