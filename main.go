@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/kataras/iris"
 	// "github.com/kataras/iris/middleware/logger"
-	"github.com/kataras/iris/middleware/recover"
+	// "github.com/kataras/iris/middleware/recover"
 	"./app"
 	"./app/libs"
 )
@@ -15,7 +15,7 @@ func main() {
 	
 	server.Logger().SetLevel("debug")
 	
-	server.Use(recover.New())
+	// server.Use(recover.New())
 	// server.Use(logger.New())
 	
 	app.Router(server)

@@ -70,6 +70,7 @@ func Router(app *iris.Application) {
 
 	app.Get("/places", func(ctx iris.Context) {
 		libs.Log("/places")
+		
 		ctx.Header("Access-Control-Allow-Origin", "*")
 
 		rows := libs.Select("*", "places", "")
@@ -91,6 +92,7 @@ func Router(app *iris.Application) {
 
 	app.Delete("/places/{id}", func(ctx iris.Context) {
 		libs.Log("/places/{id}")
+
 		ctx.Header("Access-Control-Allow-Origin", "*")
 
 		libs.Delete("places", "id=" + ctx.Params().Get("id"))
@@ -106,6 +108,7 @@ func Router(app *iris.Application) {
 
 	app.Delete("/log", func(ctx iris.Context) {
 		os.Create("./app/log/log.txt")
+
 		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
 	})
 }

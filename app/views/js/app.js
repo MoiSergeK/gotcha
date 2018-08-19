@@ -19,7 +19,7 @@ function showLog(){
 }
 
 function clearLog(){
-    $.ajax({url: '/log', method: 'delete', success: (response) => {
+    $.ajax({url: '/log', method: 'DELETE', success: (response) => {
         showLog();
     }})
 }
