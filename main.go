@@ -23,4 +23,6 @@ func main() {
 	libs.SyncDB()
 
 	server.Run(iris.Addr(":8080"), iris.WithoutServerError(iris.ErrServerClosed))
+
+	
 }

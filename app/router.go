@@ -97,7 +97,7 @@ func Router(app *iris.Application) {
 
 		libs.Delete("places", "id=" + ctx.Params().Get("id"))
 
-		ctx.JSON(iris.Map{"status": 200, "data": nil})
+		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
 	})
 
 	app.Get("/log", func(ctx iris.Context) {
