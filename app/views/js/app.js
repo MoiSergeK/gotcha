@@ -75,7 +75,7 @@ function loadCommonPlaces(){
 
                 tr.append('<td>' + row.id + '</td>');
                 tr.append('<td>' + row.lat + ", " + row.lng + '</td>');
-                tr.append('<td>' + row.address + '</td>');
+                tr.append('<td>' + row.name + '</td>');
 
                 let td = $('<td></td>');
 
