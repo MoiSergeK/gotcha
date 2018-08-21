@@ -21,14 +21,14 @@ func SyncDB() {
 	CreateTableIfNotExists("places", map[string]string{
 		"id": "int(11) not null auto_increment", 
 		"address": "varchar(300) not null",
-		"lat": "double not null",
-		"lng": "double not null" })
+		"lat": "varchar(16) not null",
+		"lng": "varchar(16) not null" })
 
 	CreateTableIfNotExists("common_places", map[string]string{
 		"id": "int(11) not null auto_increment", 
 		"name": "varchar(300) not null",
-		"lat": "double not null",
-		"lng": "double not null" })
+		"lat": "varchar(16) not null",
+		"lng": "varchar(16) not null" })
 
 	CreateTableIfNotExists("users", map[string]string{
 		"id": "int(11) not null auto_increment", 
