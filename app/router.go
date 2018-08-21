@@ -74,8 +74,6 @@ func Router(app *iris.Application) {
 		var req map[string]string
 		ctx.ReadJSON(&req)
 
-		libs.Println(req["name"])
-
 		libs.Insert("common_places", req)
 
 		ctx.JSON(iris.Map{"status": 200, "data": "ok"})

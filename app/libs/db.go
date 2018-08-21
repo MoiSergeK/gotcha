@@ -52,6 +52,8 @@ func Insert(table string, values map[string]string) {
 	vals_declared += ") values"
 	vals += ")"
 
+	Println("insert into " + dbconf["db"] + "." + table + vals_declared + vals)
+
 	dbConnection.Exec("insert into " + dbconf["db"] + "." + table + vals_declared + vals)
 }
 
