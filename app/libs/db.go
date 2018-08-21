@@ -18,8 +18,21 @@ func initDBConn() *sql.DB {
 }
 
 func SyncDB() {
-	CreateTableIfNotExists("places", map[string]string{"id": "int(11) not null auto_increment", "coords": "varchar(51) not null", "address": "varchar(300) not null"})
-	CreateTableIfNotExists("users", map[string]string{"id": "int(11) not null auto_increment", "phone": "varchar(20) not null"})
+	CreateTableIfNotExists("places", map[string]string{
+		"id": "int(11) not null auto_increment", 
+		"lat": "double not null",
+		"lng": "double not null",
+		"address": "varchar(300) not null" })
+
+	CreateTableIfNotExists("common_places", map[string]string{
+		"id": "int(11) not null auto_increment", 
+		"lat": "double not null",
+		"lng": "double not null",
+		"name": "varchar(300) not null" })
+
+	CreateTableIfNotExists("users", map[string]string{
+		"id": "int(11) not null auto_increment", 
+		"phone": "varchar(20) not null" })
 }
 
 func Insert(table string, values map[string]string) {
@@ -55,18 +68,19 @@ func Select(what string, from string, where string) []map[string]string {
 
 	var (
 		id string
-		coords string
+		lat string
+		lng string
 		address string
 	)
 
 	var places []map[string]string
 
     for rows.Next(){
-		err := rows.Scan(&id, &coords, &address)
+		err := rows.Scan(&id, &address, &lat, &lng)
 
 		if err != nil{ panic(err) }
 		
-        places = append(places, map[string]string{"id": id, "coords": coords, "address": address})
+        places = append(places, map[string]string{"id": id, "lat": lat, "lng": lng, "address": address})
 	}
 
 	return places

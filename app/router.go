@@ -9,6 +9,10 @@ import (
 )
 
 func Router(app *iris.Application) {
+	app.Get("/app.js", func(ctx iris.Context) {
+		ctx.WriteString(libs.JS("app.js"))
+	})
+
 	app.Get("/", func(ctx iris.Context) {
 		libs.Log("/")
 
@@ -20,10 +24,6 @@ func Router(app *iris.Application) {
 		}
 		
 		ctx.WriteString(view)
-	})
-
-	app.Get("/app.js", func(ctx iris.Context) {
-		ctx.WriteString(libs.JS("app.js"))
 	})
 
 	// app.Get("/geocoder", func(ctx iris.Context) {
@@ -57,8 +57,8 @@ func Router(app *iris.Application) {
 	// 	ctx.JSON(iris.Map{"address": address})
 	// })
 
-	app.Post("/place", func(ctx iris.Context) {
-		libs.Log("/place")
+	app.Post("/places/self", func(ctx iris.Context) {
+		libs.Log("POST:/place/self")
 
 		var req map[string]string
 		ctx.ReadJSON(&req)
@@ -68,8 +68,21 @@ func Router(app *iris.Application) {
 		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
 	})
 
-	app.Get("/places", func(ctx iris.Context) {
-		libs.Log("/places")
+	app.Post("/places/common", func(ctx iris.Context) {
+		libs.Log("POST:/places/common")
+
+		var req map[string]string
+		ctx.ReadJSON(&req)
+
+		libs.Println(req["name"])
+
+		libs.Insert("common_places", req)
+
+		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
+	})
+
+	app.Get("/places/self", func(ctx iris.Context) {
+		libs.Log("GET:/places/self")
 		
 		ctx.Header("Access-Control-Allow-Origin", "*")
 
@@ -78,7 +91,23 @@ func Router(app *iris.Application) {
 		var data []iris.Map
 
 		for _, value := range rows {
-			data = append(data, iris.Map{"id": value["id"], "coords": value["coords"], "address": value["address"]})
+			data = append(data, iris.Map{"id": value["id"], "lat": value["lat"], "lng": value["lng"], "address": value["address"]})
+		}
+
+		ctx.JSON(iris.Map{"status": 200, "data": data})
+	})
+
+	app.Get("/places/common", func(ctx iris.Context) {
+		libs.Log("GET:/places/common")
+		
+		ctx.Header("Access-Control-Allow-Origin", "*")
+
+		rows := libs.Select("*", "common_places", "")
+
+		var data []iris.Map
+
+		for _, value := range rows {
+			data = append(data, iris.Map{"id": value["id"], "lat": value["lat"], "lng": value["lng"], "address": value["address"]})
 		}
 
 		ctx.JSON(iris.Map{"status": 200, "data": data})
@@ -90,12 +119,22 @@ func Router(app *iris.Application) {
 		ctx.WriteString("")
 	})
 
-	app.Delete("/places/{id}", func(ctx iris.Context) {
-		libs.Log("/places/{id}")
+	app.Delete("/places/self/{id}", func(ctx iris.Context) {
+		libs.Log("DELETE:/places/self/{id}")
 
 		ctx.Header("Access-Control-Allow-Origin", "*")
 
 		libs.Delete("places", "id=" + ctx.Params().Get("id"))
+
+		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
+	})
+
+	app.Delete("/places/common/{id}", func(ctx iris.Context) {
+		libs.Log("DELETE:/places/common/{id}")
+
+		ctx.Header("Access-Control-Allow-Origin", "*")
+
+		libs.Delete("common_places", "id=" + ctx.Params().Get("id"))
 
 		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
 	})

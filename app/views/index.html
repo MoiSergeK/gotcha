@@ -10,27 +10,75 @@
     <script src="app.js"></script>
 </head>
 <body>
+    <div class="modal" id="addCommonPlaceModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add place</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCommonPlaceForm">
+                        <div class="form-group">
+                            <label for="label1">Coordinates</label>
+                            <input type="text" name="coords" class="form-control" id="label1" aria-describedby="emailHelp" placeholder="Coordinates">
+                        </div>
+                        <div class="form-group">
+                            <label for="label2">Name</label>
+                            <input type="text" name="name" class="form-control" id="label2" aria-describedby="emailHelp" placeholder="Name">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="addCommonPlace()">Add place</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-8 col-sm-12">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-1-tab" data-toggle="tab" href="#nav-1" role="tab" aria-controls="nav-home" aria-selected="true">All Places</a>
+                <a class="nav-item nav-link" id="nav-2-tab" data-toggle="tab" href="#nav-2" role="tab" aria-controls="nav-1" aria-selected="false">My places</a>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-1" role="tabpanel" aria-labelledby="nav-1-tab">
                 <table class="table">
                     <thead>
                         <tr>
                         <th scope="col">#</th>
                         <th scope="col">COORDS</th>
                         <th scope="col">ADDRESS</th>
-                        <th></th>
+                        <th><button class="btn btn-outline-primary btn-sm float-right" id="addCommonPlaceBtn">Add +</button></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        
-                    </tbody>
+                    <tbody id="commonPlacesHolder"></tbody>
                 </table>
             </div>
-            <div class="col-md-4 col-sm-12">
-                <br/>
-                <button onclick="clearLog()" class="btn btn-outline-danger btn-block btn-sm">Del</button>
-                <div id="logStack"></div>
+            <div class="tab-pane fade" id="nav-2" role="tabpanel" aria-labelledby="nav-2-tab">
+                <div class="row">
+                    <div class="col-md-8 col-sm-12">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">COORDS</th>
+                                <th scope="col">ADDRESS</th>
+                                <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="myPlacesHolder"></tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <br/>
+                        <button onclick="clearLog()" class="btn btn-outline-danger btn-block btn-sm">Del</button>
+                        <div id="logStack"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
