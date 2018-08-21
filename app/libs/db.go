@@ -50,7 +50,7 @@ func Insert(table string, values map[string]string) {
 	vals = vals[0: len(vals)-1]
 
 	vals_declared += ") values"
-	vals += ")"
+	vals += ");"
 
 	Println("insert into " + dbconf["db"] + "." + table + vals_declared + vals)
 
