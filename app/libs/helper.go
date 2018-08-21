@@ -11,3 +11,13 @@ func ReadFileAsText(fileName string) string {
 
 	return string(file)
 }
+
+func Map2JSONString(o map[string]string) string {
+	json := "{"
+
+	for key, value := range o {
+		json += "\"" + string(key) + "\":" + "\"" + string(value) + "\","
+	}
+
+	return json + "}"
+}

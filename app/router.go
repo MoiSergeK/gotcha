@@ -58,7 +58,7 @@ func Router(app *iris.Application) {
 	// })
 
 	app.Post("/places/self", func(ctx iris.Context) {
-		libs.Log("POST:/place/self")
+		libs.Log("POST:/places/self")
 
 		var req map[string]string
 		ctx.ReadJSON(&req)
@@ -107,7 +107,7 @@ func Router(app *iris.Application) {
 		var data []iris.Map
 
 		for _, value := range rows {
-			data = append(data, iris.Map{"id": value["id"], "lat": value["lat"], "lng": value["lng"], "address": value["address"]})
+			data = append(data, iris.Map{"id": value["id"], "lat": value["lat"], "lng": value["lng"], "name": value["name"]})
 		}
 
 		ctx.JSON(iris.Map{"status": 200, "data": data})
