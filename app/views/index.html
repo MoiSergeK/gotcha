@@ -10,6 +10,43 @@
     <script src="app.js"></script>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <button class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#openSearchNearbyModal">Search nearby</button>
+        </div>
+    </nav>
+    <div class="modal" id="openSearchNearbyModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Search nearby places</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="searchNearbyForm">
+                        <div class="form-group">
+                            <label for="label1">Lattitude</label>
+                            <input type="text" name="lat" class="form-control" id="label1" aria-describedby="emailHelp" placeholder="Coordinates">
+                        </div>
+                        <div class="form-group">
+                            <label for="label2">Longitude</label>
+                            <input type="text" name="lng" class="form-control" id="label2" aria-describedby="emailHelp" placeholder="Name">
+                        </div>
+                    </form>
+                    <div id="nearbyPlaces"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="searchNearby()">Add place</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="addCommonPlaceModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">

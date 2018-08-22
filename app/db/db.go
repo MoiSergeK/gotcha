@@ -1,6 +1,7 @@
-package libs
+package db
 
 import (
+	"../libs"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -9,7 +10,8 @@ var dbConnection = initDBConn()
 func DBConn() *sql.DB { return dbConnection }
 
 func initDBConn() *sql.DB {
-	dbconf := DB()
+	dbconf := libs.DB()
+
 	db, err := sql.Open(dbconf["driver"], dbconf["user"] + ":" + dbconf["pass"] + "@/" + dbconf["db"])
 	
 	if err != nil { panic(err) }
@@ -32,11 +34,12 @@ func SyncDB() {
 
 	CreateTableIfNotExists("users", map[string]string{
 		"id": "int(11) not null auto_increment", 
-		"phone": "varchar(20) not null" })
+		"hash": "varchar(128)",
+		"online": "int(11)" })
 }
 
 func Insert(table string, values map[string]string) {
-	dbconf := DB()
+	dbconf := libs.DB()
 
 	vals_declared := "("
 	vals := "("
@@ -45,20 +48,20 @@ func Insert(table string, values map[string]string) {
 		vals_declared += key + ","
 		vals += "'" + value + "',"
 	}
-
+ 
 	vals_declared = vals_declared[0: len(vals_declared)-1]
 	vals = vals[0: len(vals)-1]
 
 	vals_declared += ") values"
 	vals += ");"
 
-	Println("insert into " + dbconf["db"] + "." + table + vals_declared + vals)
+	libs.Println("insert into " + dbconf["db"] + "." + table + vals_declared + vals)
 
 	dbConnection.Exec("insert into " + dbconf["db"] + "." + table + vals_declared + vals)
 }
 
 func Select(what string, from string, where string) []map[string]string {
-	dbconf := DB()
+	dbconf := libs.DB()
 
 	if where != "" { where = " where " + where }
 
@@ -92,6 +95,8 @@ func Select(what string, from string, where string) []map[string]string {
 			lat string
 			lng string
 		)
+
+		libs.Println("AAAAAAA")
 	
 		for rows.Next(){
 			err := rows.Scan(&id, &name, &lat, &lng)
@@ -106,7 +111,7 @@ func Select(what string, from string, where string) []map[string]string {
 }
 
 func Exists(table string, where string) int {
-	dbconf := DB()
+	dbconf := libs.DB()
 
 	if where != "" { where = " where " + where }
 
@@ -136,9 +141,15 @@ func Exists(table string, where string) int {
 }
 
 func Delete(from string, where string) {
-	dbconf := DB()
+	dbconf := libs.DB()
 
 	dbConnection.Exec("delete from " + dbconf["db"] + "." + from + " where " + where)
+}
+
+func Update(table string, where string, update string) {
+	dbconf := libs.DB()
+
+	dbConnection.Exec("update " + dbconf["db"] + "." + table + " set " + update + " where " + where)
 }
 
 func CreateTableIfNotExists(table string, fields map[string]string) {

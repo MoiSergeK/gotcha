@@ -3,9 +3,11 @@ package app
 import (
 	"github.com/kataras/iris"
 	"./libs"
+	"./db"
 	"regexp"
 	// "encoding/json"
 	"os"
+	"fmt"
 )
 
 func Router(app *iris.Application) {
@@ -63,7 +65,7 @@ func Router(app *iris.Application) {
 		var req map[string]string
 		ctx.ReadJSON(&req)
 
-		libs.Insert("places", req)
+		db.Insert("places", req)
 
 		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
 	})
@@ -74,7 +76,7 @@ func Router(app *iris.Application) {
 		var req map[string]string
 		ctx.ReadJSON(&req)
 
-		libs.Insert("common_places", req)
+		db.Insert("common_places", req)
 
 		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
 	})
@@ -84,7 +86,7 @@ func Router(app *iris.Application) {
 		
 		ctx.Header("Access-Control-Allow-Origin", "*")
 
-		rows := libs.Select("*", "places", "")
+		rows := db.Select("*", "places", "")
 
 		var data []iris.Map
 
@@ -100,7 +102,7 @@ func Router(app *iris.Application) {
 		
 		ctx.Header("Access-Control-Allow-Origin", "*")
 
-		rows := libs.Select("*", "common_places", "")
+		rows := db.Select("*", "common_places", "")
 
 		var data []iris.Map
 
@@ -122,7 +124,7 @@ func Router(app *iris.Application) {
 
 		ctx.Header("Access-Control-Allow-Origin", "*")
 
-		libs.Delete("places", "id=" + ctx.Params().Get("id"))
+		db.Delete("places", "id=" + ctx.Params().Get("id"))
 
 		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
 	})
@@ -132,7 +134,7 @@ func Router(app *iris.Application) {
 
 		ctx.Header("Access-Control-Allow-Origin", "*")
 
-		libs.Delete("common_places", "id=" + ctx.Params().Get("id"))
+		db.Delete("common_places", "id=" + ctx.Params().Get("id"))
 
 		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
 	})
@@ -147,5 +149,21 @@ func Router(app *iris.Application) {
 		os.Create("./app/log/log.txt")
 
 		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
+	})
+
+	app.Post("/app/terminate", func(ctx iris.Context) {
+		db.Update("user", "id=1", "online=0")
+	})
+
+	app.Get("places/nearby", func(ctx iris.Context) {
+		lattitude,_ := ctx.URLParamFloat64("lat")
+		longitude,_ := ctx.URLParamFloat64("lng")
+
+		lat := fmt.Sprintf("%f", lattitude)
+		lng := fmt.Sprintf("%f", longitude)
+
+		rows := db.Select("*", "common_places", "lat-" + string(lat) + " and lng=" + string(lng))
+
+		ctx.JSON(iris.Map{"status": 200, "data": rows})
 	})
 }

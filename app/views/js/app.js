@@ -110,3 +110,16 @@ function addCommonPlace(){
         loadCommonPlaces();
     })
 }
+
+function searchNearby(){
+    let lat = $('#searchNearbyForm').find('input[name=lat]').val().trim();
+    let lng = $('#searchNearbyForm').find('input[name=lng]').val().trim();
+
+    $.get('/places/nearby', {lat: lat, lng: lng}, (response) => {
+        $('#nearbyPlaces').html('')
+
+        for(let p of response.data) {
+            $('#nearbyPlaces').append(p.name + '<br>')
+        }
+    })
+}

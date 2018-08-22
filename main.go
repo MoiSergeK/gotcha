@@ -4,12 +4,20 @@ import (
 	"github.com/kataras/iris"
 	// "github.com/kataras/iris/middleware/logger"
 	// "github.com/kataras/iris/middleware/recover"
+	// socketio "github.com/googollee/go-socket.io"
 	"./app"
-	"./app/libs"
+	"./app/db"
+	"time"
 )
 
 func main() {
-	defer libs.DBConn().Close()
+	// io, err := socketio.NewServer(nil)
+
+	// app.InitSocketIO(io)
+	
+	// if err != nil { panic(err) }
+
+	defer db.DBConn().Close()
 	
 	server := iris.New()
 	
@@ -20,9 +28,13 @@ func main() {
 	
 	app.Router(server)
 	
-	libs.SyncDB()
+	db.SyncDB()
 
 	server.Run(iris.Addr(":8080"), iris.WithoutServerError(iris.ErrServerClosed))
+}
 
-	
+func cron() {
+	for ;; {
+		time.Sleep(time.Second * 5)
+	}
 }
