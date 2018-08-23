@@ -162,7 +162,7 @@ func Router(app *iris.Application) {
 		lat := fmt.Sprintf("%f", lattitude)
 		lng := fmt.Sprintf("%f", longitude)
 
-		rows := db.Select("*", "common_places", "lat-" + string(lat) + " <= 0.001 and lng-" + string(lng) + " <= 0.001")
+		rows := db.Select("*", "common_places", "abs(lat-" + string(lat) + ") <= 0.001 and abs(lng-" + string(lng) + ") <= 0.001")
 
 		ctx.JSON(iris.Map{"status": 200, "data": rows})
 	})
