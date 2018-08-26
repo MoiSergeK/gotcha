@@ -19,25 +19,6 @@ func initDBConn() *sql.DB {
 	return db
 }
 
-func SyncDB() {
-	CreateTableIfNotExists("places", map[string]string{
-		"id": "int(11) not null auto_increment", 
-		"address": "varchar(300) not null",
-		"lat": "varchar(16) not null",
-		"lng": "varchar(16) not null" })
-
-	CreateTableIfNotExists("common_places", map[string]string{
-		"id": "int(11) not null auto_increment", 
-		"name": "varchar(300) not null",
-		"lat": "varchar(16) not null",
-		"lng": "varchar(16) not null" })
-
-	CreateTableIfNotExists("users", map[string]string{
-		"id": "int(11) not null auto_increment", 
-		"hash": "varchar(128)",
-		"online": "int(11)" })
-}
-
 func Insert(table string, values map[string]string) {
 	dbconf := libs.DB()
 
@@ -95,8 +76,6 @@ func Select(what string, from string, where string) []map[string]string {
 			lat string
 			lng string
 		)
-
-		libs.Println("AAAAAAA")
 	
 		for rows.Next(){
 			err := rows.Scan(&id, &name, &lat, &lng)
@@ -104,6 +83,20 @@ func Select(what string, from string, where string) []map[string]string {
 			if err != nil{ panic(err) }
 			
 			places = append(places, map[string]string{"id": id, "name": name, "lat": lat, "lng": lng})
+		}
+	} else if from == "users" {
+		var (
+			id string
+			name string
+			phone string
+		)
+	
+		for rows.Next(){
+			err := rows.Scan(&id, &name, &phone)
+	
+			if err != nil{ panic(err) }
+			
+			places = append(places, map[string]string{"id": id, "name": name, "phone": phone})
 		}
 	}
 

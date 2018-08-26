@@ -4,28 +4,28 @@ import (
 	"github.com/kataras/iris"
 	"./libs"
 	"./db"
-	"regexp"
-	// "encoding/json"
 	"os"
-	"fmt"
+	"./controllers"
 )
 
 func Router(app *iris.Application) {
 	app.Get("/app.js", func(ctx iris.Context) {
-		ctx.WriteString(libs.JS("app.js"))
+		controllers.JS(ctx)
+	})
+
+	app.Any("/socket.io*", func(ctx iris.Context) {
+		ctx.Header("Access-Control-Allow-Origin", "*")
+		ctx.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
 	})
 
 	app.Get("/", func(ctx iris.Context) {
-		libs.Log("/")
+		controllers.Index(ctx)
+	})
 
-		view := libs.View("index")
-
-		for key, value := range map[string]string{ "title": "Gotcha | HOME" } {
-			r := regexp.MustCompile("{{ ?" + key + " ?}}")
-			view = r.ReplaceAllString(view, value)
-		}
-		
-		ctx.WriteString(view)
+	app.Options("/*", func(ctx iris.Context) {
+		ctx.Header("Access-Control-Allow-Origin", "*")
+		ctx.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
+		ctx.WriteString("")
 	})
 
 	// app.Get("/geocoder", func(ctx iris.Context) {
@@ -59,89 +59,40 @@ func Router(app *iris.Application) {
 	// 	ctx.JSON(iris.Map{"address": address})
 	// })
 
+	app.Get("/users", func(ctx iris.Context) {
+		controllers.GetAllUsers(ctx)
+	})
+
+	app.Post("/users", func(ctx iris.Context) {
+		controllers.AddUser(ctx)
+	})
+
 	app.Post("/places/self", func(ctx iris.Context) {
-		libs.Log("POST:/places/self")
-
-		var req map[string]string
-		ctx.ReadJSON(&req)
-
-		db.Insert("places", req)
-
-		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
+		controllers.AddSelfPlaces(ctx)
 	})
 
 	app.Post("/places/common", func(ctx iris.Context) {
-		libs.Log("POST:/places/common")
-
-		var req map[string]string
-		ctx.ReadJSON(&req)
-
-		db.Insert("common_places", req)
-
-		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
+		controllers.AddCommonPlaces(ctx)
 	})
 
 	app.Get("/places/self", func(ctx iris.Context) {
-		libs.Log("GET:/places/self")
-		
-		ctx.Header("Access-Control-Allow-Origin", "*")
-
-		rows := db.Select("*", "places", "")
-
-		var data []iris.Map
-
-		for _, value := range rows {
-			data = append(data, iris.Map{"id": value["id"], "lat": value["lat"], "lng": value["lng"], "address": value["address"]})
-		}
-
-		ctx.JSON(iris.Map{"status": 200, "data": data})
+		controllers.GetSelfPlaces(ctx)
 	})
 
 	app.Get("/places/common", func(ctx iris.Context) {
-		libs.Log("GET:/places/common")
-		
-		ctx.Header("Access-Control-Allow-Origin", "*")
-
-		rows := db.Select("*", "common_places", "")
-
-		var data []iris.Map
-
-		for _, value := range rows {
-			data = append(data, iris.Map{"id": value["id"], "lat": value["lat"], "lng": value["lng"], "name": value["name"]})
-		}
-
-		ctx.JSON(iris.Map{"status": 200, "data": data})
-	})
-
-	app.Options("/*", func(ctx iris.Context) {
-		ctx.Header("Access-Control-Allow-Origin", "*")
-		ctx.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
-		ctx.WriteString("")
+		controllers.GetCommonPlaces(ctx)
 	})
 
 	app.Delete("/places/self/{id}", func(ctx iris.Context) {
-		libs.Log("DELETE:/places/self/{id}")
-
-		ctx.Header("Access-Control-Allow-Origin", "*")
-
-		db.Delete("places", "id=" + ctx.Params().Get("id"))
-
-		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
+		controllers.DeleteSelfPlace(ctx)
 	})
 
 	app.Delete("/places/common/{id}", func(ctx iris.Context) {
-		libs.Log("DELETE:/places/common/{id}")
-
-		ctx.Header("Access-Control-Allow-Origin", "*")
-
-		db.Delete("common_places", "id=" + ctx.Params().Get("id"))
-
-		ctx.JSON(iris.Map{"status": 200, "data": "ok"})
+		controllers.DeleteCommonPlace(ctx)
 	})
 
 	app.Get("/log", func(ctx iris.Context) {
 		data := libs.ReadFileAsText("./app/log/log.txt")
-
 		ctx.JSON(iris.Map{"status": 200, "data": data})
 	})
 
@@ -156,14 +107,38 @@ func Router(app *iris.Application) {
 	})
 
 	app.Get("places/nearby", func(ctx iris.Context) {
-		lattitude,_ := ctx.URLParamFloat64("lat")
-		longitude,_ := ctx.URLParamFloat64("lng")
+		controllers.GetNearbyPlaces(ctx)
+	})
 
-		lat := fmt.Sprintf("%f", lattitude)
-		lng := fmt.Sprintf("%f", longitude)
+	app.Post("friends", func(ctx iris.Context) {
+		controllers.AddFriends(ctx)
+	})
 
-		rows := db.Select("*", "common_places", "abs(lat-" + string(lat) + ") <= 0.001 and abs(lng-" + string(lng) + ") <= 0.001")
+	app.Get("friends", func(ctx iris.Context) {
+		controllers.GetFriends(ctx)
+	})
 
-		ctx.JSON(iris.Map{"status": 200, "data": rows})
+	app.Get("friends/search", func(ctx iris.Context) {
+		controllers.GetResearchedFriends(ctx)
+	})
+
+	// Request friend's location
+	app.Get("friends/{id}/location", func(ctx iris.Context) {
+		controllers.RequestFriendLocation(ctx)
+	})
+
+	// Request all friends locations
+	app.Get("friends/location", func(ctx iris.Context) {
+		controllers.RequestAllFriendsLocations(ctx)
+	})
+
+	// Share my location with friend
+	app.Post("friends/{id}/location", func(ctx iris.Context) {
+		controllers.ShareLocationWithFriend(ctx)
+	})
+
+	// Share my location with all friends
+	app.Post("friends/location", func(ctx iris.Context) {
+		controllers.ShareLocationWithAllFriends(ctx)
 	})
 }

@@ -1,6 +1,12 @@
+var socket = null;
+
+
 $(document).ready(() => {
+    initSocket();
+
     loadSelfPlaces();
     loadCommonPlaces();
+    loadUsers();
     
     showLog();
     
@@ -27,6 +33,26 @@ function clearLog(){
     $.ajax({url: '/log', method: 'DELETE', success: (response) => {
         showLog();
     }})
+}
+
+function loadUsers(){
+    $.get('/users', (response) => {
+        $('#usersHolder').html('');
+
+        let rows = response.data;
+
+        if(rows){
+            for(let row of rows) {
+                let tr = $('<tr></tr>');
+
+                tr.append('<td>' + row.id + '</td>');
+                tr.append('<td>' + row.name + '</td>');
+                tr.append('<td>' + row.phone + '</td>');
+
+                $('#usersHolder').append(tr)
+            }
+        }
+    })
 }
 
 function loadSelfPlaces(){
@@ -122,4 +148,14 @@ function searchNearby(){
             $('#nearbyPlaces').append(p.name + '<br>')
         }
     })
+}
+
+function initSocket(){
+    // socket = io.connect('http://127.0.0.1:8080');
+
+    // socket.on('connect', function(){
+    //     console.log('connect');
+
+    //     socket.emit('event', 'hello');
+    // });
 }
