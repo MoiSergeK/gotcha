@@ -7,6 +7,7 @@ import (
 )
 
 func Log(data string) {
+	fmt.Println(data)
 	file, err := os.OpenFile("./app/log/log.txt", os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	if err != nil{
 		fmt.Println(err)
