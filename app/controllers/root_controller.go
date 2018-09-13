@@ -5,6 +5,7 @@ import (
 	"../libs"
 	"regexp"
 	"../db"
+	"strconv"
 )
 
 
@@ -42,9 +43,13 @@ func GetAllUsers(ctx iris.Context) {
 }
 
 func SearchUsers(ctx iris.Context) {
+	libs.Log("GET:/users/search")
+		
 	ctx.Header("Access-Control-Allow-Origin", "*")
 
-	rows := db.Select("id, name, phone", "users", "where phone like '%" + ctx.Params().Get("tel") + "%'")
+	tel, _ := ctx.URLParamInt("tel")
+
+	rows := db.Select("id, name, phone", "users", "phone = '+' + " +  strconv.Itoa(tel))
 
 	var data []iris.Map
 

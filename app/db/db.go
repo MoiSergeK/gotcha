@@ -46,6 +46,8 @@ func Select(what string, from string, where string) []map[string]string {
 
 	if where != "" { where = " where " + where }
 
+	println("select " + what + " from " + dbconf["db"] + "." + from + where)
+
 	rows, err := dbConnection.Query("select " + what + " from " + dbconf["db"] + "." + from + where)
 	
 	defer rows.Close()
