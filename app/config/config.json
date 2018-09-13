@@ -1,6 +1,9 @@
 {
-    "driver": "mysql",
-    "user": "root",
-    "pass": "1234",
-    "db": "gotcha"
+    "db": {
+        "driver": "mysql",
+        "user": "root",
+        "pass": "1234",
+        "db": "gotcha"
+    },
+    "secret": "123"
 }

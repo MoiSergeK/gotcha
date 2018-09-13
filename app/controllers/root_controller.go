@@ -41,6 +41,20 @@ func GetAllUsers(ctx iris.Context) {
 	ctx.JSON(iris.Map{"status": 200, "data": data})
 }
 
+func SearchUsers(ctx iris.Context) {
+	ctx.Header("Access-Control-Allow-Origin", "*")
+
+	rows := db.Select("id, name, phone", "users", "where phone like '%" + ctx.Params().Get("tel") + "%'")
+
+	var data []iris.Map
+
+	for _, value := range rows {
+		data = append(data, iris.Map{"id": value["id"], "name": value["name"], "phone": value["phone"]})
+	}
+
+	ctx.JSON(iris.Map{"status": 200, "data": data})
+}
+
 func AddUser(ctx iris.Context) {
 	libs.Log("POST:/users")
 

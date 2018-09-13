@@ -10,7 +10,7 @@ var dbConnection = initDBConn()
 func DBConn() *sql.DB { return dbConnection }
 
 func initDBConn() *sql.DB {
-	dbconf := libs.DB()
+	dbconf := libs.CfgDB()
 
 	db, err := sql.Open(dbconf["driver"], dbconf["user"] + ":" + dbconf["pass"] + "@/" + dbconf["db"])
 	
@@ -20,7 +20,7 @@ func initDBConn() *sql.DB {
 }
 
 func Insert(table string, values map[string]string) {
-	dbconf := libs.DB()
+	dbconf := libs.CfgDB()
 
 	vals_declared := "("
 	vals := "("
@@ -42,7 +42,7 @@ func Insert(table string, values map[string]string) {
 }
 
 func Select(what string, from string, where string) []map[string]string {
-	dbconf := libs.DB()
+	dbconf := libs.CfgDB()
 
 	if where != "" { where = " where " + where }
 
@@ -104,7 +104,7 @@ func Select(what string, from string, where string) []map[string]string {
 }
 
 func Exists(table string, where string) int {
-	dbconf := libs.DB()
+	dbconf := libs.CfgDB()
 
 	if where != "" { where = " where " + where }
 
@@ -134,13 +134,13 @@ func Exists(table string, where string) int {
 }
 
 func Delete(from string, where string) {
-	dbconf := libs.DB()
+	dbconf := libs.CfgDB()
 
 	dbConnection.Exec("delete from " + dbconf["db"] + "." + from + " where " + where)
 }
 
 func Update(table string, where string, update string) {
-	dbconf := libs.DB()
+	dbconf := libs.CfgDB()
 
 	dbConnection.Exec("update " + dbconf["db"] + "." + table + " set " + update + " where " + where)
 }

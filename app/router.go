@@ -13,11 +13,6 @@ func Router(app *iris.Application) {
 		controllers.JS(ctx)
 	})
 
-	app.Any("/socket.io*", func(ctx iris.Context) {
-		ctx.Header("Access-Control-Allow-Origin", "*")
-		ctx.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
-	})
-
 	app.Get("/", func(ctx iris.Context) {
 		controllers.Index(ctx)
 	})
@@ -59,8 +54,16 @@ func Router(app *iris.Application) {
 	// 	ctx.JSON(iris.Map{"address": address})
 	// })
 
+	app.Post("/signup", func(ctx iris.Context) {
+		controllers.SignUp(ctx)
+	})
+
 	app.Get("/users", func(ctx iris.Context) {
 		controllers.GetAllUsers(ctx)
+	})
+
+	app.Get("/users/search", func(ctx iris.Context) {
+		controllers.SearchUsers(ctx)
 	})
 
 	app.Post("/users", func(ctx iris.Context) {
@@ -127,18 +130,43 @@ func Router(app *iris.Application) {
 		controllers.RequestFriendLocation(ctx)
 	})
 
-	// Request all friends locations
-	app.Get("friends/location", func(ctx iris.Context) {
-		controllers.RequestAllFriendsLocations(ctx)
-	})
-
 	// Share my location with friend
 	app.Post("friends/{id}/location", func(ctx iris.Context) {
 		controllers.ShareLocationWithFriend(ctx)
 	})
 
+	// Request all friends locations
+	app.Get("friends/location", func(ctx iris.Context) {
+		controllers.RequestAllFriendsLocations(ctx)
+	})
+
 	// Share my location with all friends
 	app.Post("friends/location", func(ctx iris.Context) {
 		controllers.ShareLocationWithAllFriends(ctx)
+	})
+
+	// Update self route
+	app.Put("route/self", func(ctx iris.Context) {
+		controllers.PushSelfRoute(ctx)
+	})
+
+	// Get self routes
+	app.Get("routes/self", func(ctx iris.Context) {
+		controllers.GetSelfRoutes(ctx)
+	})
+
+	// Get self route
+	app.Get("routes/self/{id}", func(ctx iris.Context) {
+		controllers.GetSelfRoute(ctx)
+	})
+
+	// Get common routes
+	app.Get("routes/common", func(ctx iris.Context) {
+		controllers.GetCommonRoutes(ctx)
+	})
+
+	// Get common route
+	app.Get("routes/common/{id}", func(ctx iris.Context) {
+		controllers.GetCommonRoute(ctx)
 	})
 }

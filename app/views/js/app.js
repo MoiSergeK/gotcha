@@ -2,11 +2,12 @@ var socket = null;
 
 
 $(document).ready(() => {
-    initSocket();
+    // initSocket();
 
     loadSelfPlaces();
     loadCommonPlaces();
     loadUsers();
+    loadRoutes();
     
     showLog();
     
@@ -48,6 +49,29 @@ function loadUsers(){
                 tr.append('<td>' + row.id + '</td>');
                 tr.append('<td>' + row.name + '</td>');
                 tr.append('<td>' + row.phone + '</td>');
+
+                let td = $('<td></td>');
+
+                let btn1 = $('<button class="btn btn-outline-primary btn-sm float-right">Send Location</button>');
+
+                btn1.on('click', (e) => {
+                    $.ajax({url: '/friends/'+row.id+'/location', method: 'POST', success: (response) => {
+                        alert('ok');
+                    }})
+                })
+
+                let btn2 = $('<button class="btn btn-outline-primary btn-sm float-right">Request Location</button>');
+
+                btn2.on('click', (e) => {
+                    $.ajax({url: '/friends/'+row.id+'/location', method: 'GET', success: (response) => {
+                        alert('ok');
+                    }})
+                })
+
+                td.append(btn1);
+                td.append(btn2);
+
+                tr.append(td);
 
                 $('#usersHolder').append(tr)
             }
@@ -123,6 +147,40 @@ function loadCommonPlaces(){
     })
 }
 
+function loadRoutes() {
+    $.get('/routes/self', (response) => {
+        $('#selfRoutesHolder').html('');
+
+        let rows = response.data;
+
+        if(rows){
+            for(let row of rows) {
+                let tr = $('<tr></tr>');
+
+                tr.append('<td>' + row.id + '</td>');
+                tr.append('<td>' + row.name + '</td>');
+                tr.append('<td>' + row.route + '</td>');
+
+                let td = $('<td></td>');
+
+                let btn = $('<button class="btn btn-outline-danger btn-sm float-right">Del</button>');
+
+                btn.on('click', (e) => {
+                    $.ajax({url: '/places/common/' + row.id, method: 'DELETE', success: (response) => {
+                        loadCommonPlaces();
+                    }})
+                })
+
+                td.append(btn);
+
+                tr.append(td);
+
+                $('#commonPlacesHolder').append(tr)
+            }
+        }
+    })
+}
+
 function addCommonPlace(){
     let coords = $('#addCommonPlaceForm').find('input[name=coords]').val().split(',').map(x => x.trim())
     let sendData = {
@@ -150,12 +208,12 @@ function searchNearby(){
     })
 }
 
-function initSocket(){
-    // socket = io.connect('http://127.0.0.1:8080');
+// function initSocket(){
+//     socket = io('http://127.0.0.1:8080');
 
-    // socket.on('connect', function(){
-    //     console.log('connect');
+//     socket.on('connect', function(){
+//         console.log('connect');
 
-    //     socket.emit('event', 'hello');
-    // });
-}
+//         socket.emit('event', 'hello');
+//     });
+// }
