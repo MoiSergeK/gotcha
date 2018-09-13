@@ -49,7 +49,7 @@ func SearchUsers(ctx iris.Context) {
 
 	tel, _ := ctx.URLParamInt("tel")
 
-	rows := db.Select("id, name, phone", "users", "phone = '+' + " +  strconv.Itoa(tel))
+	rows := db.Select("id, name, phone", "users", "phone = '+' + '" +  strconv.Itoa(tel) + "'")
 
 	var data []iris.Map
 
