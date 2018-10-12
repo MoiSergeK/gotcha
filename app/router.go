@@ -23,6 +23,13 @@ func Router(app *iris.Application) {
 		ctx.WriteString("")
 	})
 
+	app.Post("/comment", func(ctx iris.Context){
+		var req map[string]string
+		ctx.ReadJSON(&req)
+		libs.Log("BITFUTURE " + req["message"]);
+		ctx.WriteString("")
+	})
+
 	// app.Get("/geocoder", func(ctx iris.Context) {
 	// 	lat := ctx.URLParam("lat")
 	// 	lng := ctx.URLParam("lng")
